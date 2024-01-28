@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue">#FF333AFF</color>
+    <color name="bg">#FFE4FFFE</color>
+    <color name="item_bg">#FF33FFF7</color>
+    <color name="clickables">#FF9133FF</color>
+</resources>
