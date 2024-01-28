@@ -16,6 +16,7 @@
         android:id="@+id/icon1"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_marginStart="5dp"
         app:srcCompat="@drawable/empty_circle"
         />
 
@@ -23,47 +24,55 @@
         android:id="@+id/icon2"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_marginStart="5dp"
         app:srcCompat="@drawable/empty_circle" />
 
     <ImageView
         android:id="@+id/icon3"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_marginStart="5dp"
         app:srcCompat="@drawable/empty_circle" />
 
     <ImageView
         android:id="@+id/icon4"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_marginStart="5dp"
         app:srcCompat="@drawable/empty_circle" />
 
     <ImageView
         android:id="@+id/icon5"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_marginStart="5dp"
         app:srcCompat="@drawable/empty_circle" />
 
     <ImageView
         android:id="@+id/icon6"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_marginStart="5dp"
         app:srcCompat="@drawable/empty_circle" />
 
     <ImageView
         android:id="@+id/icon7"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_marginStart="5dp"
         app:srcCompat="@drawable/empty_circle" />
 
     <ImageView
         android:id="@+id/icon8"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_marginStart="5dp"
         app:srcCompat="@drawable/empty_circle" />
 
     <ImageView
         android:id="@+id/icon9"
         android:layout_width="10dp"
         android:layout_height="10dp"
-        app:srcCompat="@drawable/empty_circle" />
+        android:layout_marginStart="5dp"
+        app:srcCompat="@drawable/empty_map_marker" />
 </LinearLayout>
