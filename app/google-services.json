@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "750557491139",
+    "project_id": "protrike-1ae0d",
+    "storage_bucket": "protrike-1ae0d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750557491139:android:1d92ef001124f1e65d5776",
+        "android_client_info": {
+          "package_name": "com.research.protrike"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwncPz1t5oejXonQ6hddPzxJnV9WOwvVM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

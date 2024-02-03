@@ -1,19 +1,14 @@
-package com.research.protrike;
+package com.research.protrike.SplashScreen;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import com.research.protrike.CustomViews.ProtrikeLoadingBar;
 import com.research.protrike.MainFeats.Dashboard;
+import com.research.protrike.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,10 +56,10 @@ public class MainActivity extends AppCompatActivity {
     }
     private void Process2(){
         long timeStarted = System.currentTimeMillis();
-        while (System.currentTimeMillis()-timeStarted<200);
+        while (System.currentTimeMillis()-timeStarted<1000);
     }
     private void Process3(){
         long timeStarted = System.currentTimeMillis();
-        while (System.currentTimeMillis()-timeStarted<200);
+        while (System.currentTimeMillis()-timeStarted<500);
     }
 }
