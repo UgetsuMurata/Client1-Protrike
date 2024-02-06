@@ -412,7 +412,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/departed_from_container"
+                        android:id="@+id/started_at_container"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_marginStart="20dp"
@@ -420,7 +420,7 @@
                         android:layout_marginEnd="10dp"
                         android:backgroundTint="@color/item_bg"
                         app:cardCornerRadius="10dp"
-                        app:layout_constraintEnd_toStartOf="@id/arrived_at_container"
+                        app:layout_constraintEnd_toStartOf="@id/ended_at_container"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/current_distance_container">
 
@@ -445,12 +445,12 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/quicksand"
-                                    android:text="Departed from"
+                                    android:text="Started At"
                                     android:textColor="@android:color/black"
                                     android:textSize="12sp" />
 
                                 <TextView
-                                    android:id="@+id/departed_from"
+                                    android:id="@+id/started_at"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/quicksand"
@@ -462,7 +462,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/arrived_at_container"
+                        android:id="@+id/ended_at_container"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_marginStart="10dp"
@@ -471,7 +471,7 @@
                         android:backgroundTint="@color/item_bg"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/departed_from_container"
+                        app:layout_constraintStart_toEndOf="@id/started_at_container"
                         app:layout_constraintTop_toBottomOf="@id/current_fare_container">
 
                         <LinearLayout
@@ -495,12 +495,12 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/quicksand"
-                                    android:text="Arrived at"
+                                    android:text="Ended at"
                                     android:textColor="@android:color/black"
                                     android:textSize="12sp" />
 
                                 <TextView
-                                    android:id="@+id/arrived_at"
+                                    android:id="@+id/ended_at"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/quicksand"
@@ -521,7 +521,7 @@
                         app:layout_constraintBottom_toTopOf="@id/button_description"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/arrived_at_container">
+                        app:layout_constraintTop_toBottomOf="@id/ended_at_container">
 
                         <TextView
                             android:id="@+id/fare_counter_button_text"
@@ -548,7 +548,8 @@
                         android:textSize="10sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/fare_counter_button" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

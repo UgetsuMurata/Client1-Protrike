@@ -8,7 +8,10 @@ import android.content.SharedPreferences;
 
 public class SharedPref {
 
-    private static final String PREFS_NAME = "APP_PREF_NAME";
+    private static final String PREFS_NAME = "COM_RESEARCH_PROTRIKE_SP";
+    public static final String TRICYCLE_FARE_LAST_UPDATE = "TRICYCLE_FARE_LAST_UPDATE";
+    public static final String CONTACTS_LAST_UPDATE = "CONTACTS_LAST_UPDATE";
+
 
     public static void write(Context context, String code, String object ) {
         SharedPreferences.Editor editor = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
