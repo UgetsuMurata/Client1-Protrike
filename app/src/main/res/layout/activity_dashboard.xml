@@ -74,205 +74,209 @@
             android:layout_marginTop="20dp"
             android:layout_weight="1">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/tricycle_number_container"
-                    android:layout_width="0dp"
-                    android:layout_height="75dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:backgroundTint="@color/item_bg"
-                    app:cardCornerRadius="10dp"
-                    app:layout_constraintEnd_toStartOf="@id/operator_name_container"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/tricycle_number_container"
+                android:layout_width="0dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="@color/item_bg"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintEnd_toStartOf="@id/operator_name_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingStart="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/tricycle_number_icon" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/tricycle_number_icon" />
-
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:fontFamily="@font/quicksand"
+                            android:text="Tricycle Number"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/quicksand"
-                                android:text="Tricycle Number"
-                                android:textColor="@android:color/black"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tricycle_number"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/quicksand"
-                                android:text="--"
-                                android:textColor="@android:color/black"
-                                android:textSize="14sp" />
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tricycle_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/quicksand"
+                            android:text="--"
+                            android:textColor="@android:color/black"
+                            android:textSize="14sp" />
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/operator_name_container"
-                    android:layout_width="0dp"
-                    android:layout_height="75dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:backgroundTint="@color/item_bg"
-                    app:cardCornerRadius="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/tricycle_number_container"
-                    app:layout_constraintTop_toTopOf="parent">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/operator_name_container"
+                android:layout_width="0dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:backgroundTint="@color/item_bg"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tricycle_number_container"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingStart="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/name_icon" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/name_icon" />
-
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:fontFamily="@font/quicksand"
+                            android:text="Operator Name"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/quicksand"
-                                android:text="Operator Name"
-                                android:textColor="@android:color/black"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/operator_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/quicksand"
-                                android:text="--"
-                                android:textColor="@android:color/black"
-                                android:textSize="14sp" />
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/operator_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/quicksand"
+                            android:text="--"
+                            android:textColor="@android:color/black"
+                            android:textSize="14sp" />
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/address_container"
-                    android:layout_width="0dp"
-                    android:layout_height="75dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:backgroundTint="@color/item_bg"
-                    app:cardCornerRadius="10dp"
-                    app:layout_constraintEnd_toStartOf="@id/contact_number_container"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tricycle_number_container">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/address_container"
+                android:layout_width="0dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="@color/item_bg"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintEnd_toStartOf="@id/contact_number_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tricycle_number_container">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingStart="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/map_icon_black" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/map_icon_black" />
-
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:fontFamily="@font/quicksand"
+                            android:text="Address"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/quicksand"
-                                android:text="Address"
-                                android:textColor="@android:color/black"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/address"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/quicksand"
-                                android:text="--"
-                                android:textColor="@android:color/black"
-                                android:textSize="14sp" />
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/quicksand"
+                            android:text="--"
+                            android:textColor="@android:color/black"
+                            android:textSize="14sp" />
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/contact_number_container"
-                    android:layout_width="0dp"
-                    android:layout_height="75dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:backgroundTint="@color/item_bg"
-                    app:cardCornerRadius="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/address_container"
-                    app:layout_constraintTop_toBottomOf="@id/operator_name_container">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/contact_number_container"
+                android:layout_width="0dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:backgroundTint="@color/item_bg"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/address_container"
+                app:layout_constraintTop_toBottomOf="@id/operator_name_container">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingStart="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/contact_number_icon" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/contact_number_icon" />
-
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:fontFamily="@font/quicksand"
+                            android:text="Contact Number"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/quicksand"
-                                android:text="Contact Number"
-                                android:textColor="@android:color/black"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/contact_number"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/quicksand"
-                                android:text="--"
-                                android:textColor="@android:color/black"
-                                android:textSize="14sp" />
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/contact_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/quicksand"
+                            android:text="--"
+                            android:textColor="@android:color/black"
+                            android:textSize="14sp" />
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/fare_counter_container"
@@ -327,7 +331,8 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:gravity="center"
+                            android:gravity="center_vertical"
+                            android:paddingStart="10dp"
                             android:orientation="horizontal">
 
                             <ImageView
@@ -377,7 +382,8 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:gravity="center"
+                            android:gravity="center_vertical"
+                            android:paddingStart="10dp"
                             android:orientation="horizontal">
 
                             <ImageView
@@ -427,7 +433,8 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:gravity="center"
+                            android:gravity="center_vertical"
+                            android:paddingStart="10dp"
                             android:orientation="horizontal">
 
                             <ImageView
@@ -477,7 +484,8 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:gravity="center"
+                            android:gravity="center_vertical"
+                            android:paddingStart="10dp"
                             android:orientation="horizontal">
 
                             <ImageView
@@ -512,6 +520,49 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/discount_choices"
+                        android:layout_width="300dp"
+                        android:layout_height="25dp"
+                        app:cardCornerRadius="10dp"
+                        android:layout_marginTop="10dp"
+                        app:layout_constraintBottom_toTopOf="@id/fare_counter_button"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/ended_at_container">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <TextView
+                                android:id="@+id/no_discount"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@color/clickables"
+                                android:fontFamily="@font/quicksand"
+                                android:gravity="center"
+                                android:text="No Discount"
+                                android:textColor="@android:color/white"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/discounted"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@color/clickables_fade"
+                                android:fontFamily="@font/quicksand"
+                                android:gravity="center"
+                                android:text="Discounted"
+                                android:textColor="@android:color/black"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
                         android:id="@+id/fare_counter_button"
                         android:layout_width="75dp"
                         android:layout_height="30dp"
@@ -521,7 +572,7 @@
                         app:layout_constraintBottom_toTopOf="@id/button_description"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/ended_at_container">
+                        app:layout_constraintTop_toBottomOf="@id/discount_choices">
 
                         <TextView
                             android:id="@+id/fare_counter_button_text"
@@ -540,7 +591,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="50dp"
+                        android:layout_marginBottom="30dp"
                         android:fontFamily="@font/quicksand"
                         android:gravity="center"
                         android:text="Click “end” when you reached your destination"
@@ -549,7 +600,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/fare_counter_button" />
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

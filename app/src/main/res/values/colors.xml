@@ -5,4 +5,5 @@
     <color name="bg">#FFE4FFFE</color>
     <color name="item_bg">#FF33FFF7</color>
     <color name="clickables">#FF9133FF</color>
+    <color name="clickables_fade">#D4AFFF</color>
 </resources>

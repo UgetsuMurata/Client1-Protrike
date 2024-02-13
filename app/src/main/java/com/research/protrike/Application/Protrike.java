@@ -42,7 +42,7 @@ public class Protrike extends Application {
         super.onTerminate();
     }
 
-    public Boolean getHasInternet() {
+    public Boolean hasInternet() {
         return hasInternet;
     }
 

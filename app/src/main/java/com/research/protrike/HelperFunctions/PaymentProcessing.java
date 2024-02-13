@@ -27,7 +27,7 @@ public class PaymentProcessing {
         if (distance <= tricycleFareObject.get(TF.MIN_FARE_DIST) * 1000) {
             return startingFare;
         } else {
-            int succeededKM = (int) Math.ceil(distance / (tricycleFareObject.get(TF.NORMAL_STARTING_FARE) * 1000)) - 1;
+            int succeededKM = (int) Math.ceil((distance - tricycleFareObject.get(TF.MIN_FARE_DIST)) / 1000);
             return startingFare + (succeedingFare * succeededKM);
         }
     }

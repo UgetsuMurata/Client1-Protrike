@@ -3,7 +3,10 @@ package com.research.protrike.MainFeats;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,8 +22,10 @@ import com.research.protrike.DataManager.FBDataCaller;
 import com.research.protrike.DataTypes.OperatorInfo;
 import com.research.protrike.HelperFunctions.LatLngProcessing;
 import com.research.protrike.HelperFunctions.PaymentProcessing;
+import com.research.protrike.HelperFunctions.PaymentProcessing.Discount;
 import com.research.protrike.R;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -32,9 +37,10 @@ public class Dashboard extends AppCompatActivity {
     TextView currentDistance, currentFare, startedAt, endedAt;
     CardView fareCounterButton;
     TextView fareCounterButtonText, fareCounterButtonDescription;
-
     Protrike protrike;
+    TextView discounted, noDiscount;
     Protrike.FareCounterBGP fareCounterBGP;
+    Discount setDiscount = Discount.NONE;
 
     private enum FareButtonModes {
         start, end, pay
@@ -48,7 +54,7 @@ public class Dashboard extends AppCompatActivity {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     Intent intent = result.getData();
                     if (intent != null) {
-                        if (FBDataCaller.isInternetAvailable()) {
+                        if (FBDataCaller.isInternetAvailable(this)) {
                             FBDataCaller.tricycleNumberToOperatorInformation(
                                     this,
                                     intent.getStringExtra("TRICYCLE_NUMBER"),
@@ -83,6 +89,8 @@ public class Dashboard extends AppCompatActivity {
         fareCounterButton = findViewById(R.id.fare_counter_button);
         fareCounterButtonText = findViewById(R.id.fare_counter_button_text);
         fareCounterButtonDescription = findViewById(R.id.button_description);
+        discounted = findViewById(R.id.discounted);
+        noDiscount = findViewById(R.id.no_discount);
 
         protrike = Protrike.getInstance();
         fareCounterBGP = protrike.getFareCounterBGP();
@@ -96,6 +104,27 @@ public class Dashboard extends AppCompatActivity {
         qrScanner.setOnClickListener(view -> {
             Intent intent = new Intent(this, TOIScanner.class);
             scanQR.launch(intent);
+        });
+
+        noDiscount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDiscount = Discount.NONE;
+                if (fareButtonMode != FareButtonModes.start) {
+                    updateLiveCounter();
+                }
+                updateDiscountButtons();
+            }
+        });
+        discounted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDiscount = Discount.STUDENT;
+                if (fareButtonMode != FareButtonModes.start) {
+                    updateLiveCounter();
+                }
+                updateDiscountButtons();
+            }
         });
 
         fareCounterButton.setOnClickListener(view -> {
@@ -124,6 +153,8 @@ public class Dashboard extends AppCompatActivity {
                         fareCounterButtonText.setText("Start");
                         fareCounterButtonDescription.setText("Click “Start” immediately once the tricycle leaves.");
                         fareButtonMode = FareButtonModes.start;
+                        currentDistance.setText("-- km");
+                        currentFare.setText("₱ --");
                     } else {
                         Toast.makeText(Dashboard.this, "Cannot receive GPS signal. Try again later.", Toast.LENGTH_SHORT).show();
                     }
@@ -132,22 +163,47 @@ public class Dashboard extends AppCompatActivity {
         });
     }
 
+    private void updateDiscountButtons(){
+        if (setDiscount == Discount.STUDENT){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    noDiscount.setBackgroundColor(Dashboard.this.getResources().getColor(R.color.clickables_fade, getTheme()));
+                    discounted.setBackgroundColor(Dashboard.this.getResources().getColor(R.color.clickables, getTheme()));
+                    noDiscount.setTextColor(Dashboard.this.getResources().getColor(android.R.color.black, getTheme()));
+                    discounted.setTextColor(Dashboard.this.getResources().getColor(android.R.color.white, getTheme()));
+                }
+            });
+        } else if (setDiscount == Discount.NONE){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    noDiscount.setBackgroundColor(Dashboard.this.getResources().getColor(R.color.clickables, getTheme()));
+                    discounted.setBackgroundColor(Dashboard.this.getResources().getColor(R.color.clickables_fade, getTheme()));
+                    noDiscount.setTextColor(Dashboard.this.getResources().getColor(android.R.color.white, getTheme()));
+                    discounted.setTextColor(Dashboard.this.getResources().getColor(android.R.color.black, getTheme()));
+                }
+            });
+        }
+    }
+
     private boolean updateFareCounter() {
         Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
+        String time = dateFormat.format(currentTime);
         switch (fareButtonMode) {
             case start:
-                startedAt.setText(currentTime.toString());
+                startedAt.setText(time);
                 return true;
             case end:
-                endedAt.setText(currentTime.toString());
+                endedAt.setText(time);
                 return true;
             case pay:
                 fareCounterBGP.reset();
                 startedAt.setText("--");
                 endedAt.setText("--");
-                break;
+                return true;
         }
-
         return false;
     }
 
@@ -159,7 +215,7 @@ public class Dashboard extends AppCompatActivity {
                 float costing = 0f;
                 if (fareCounterBGP.getPrevLatLng() != null) {
                     distance = LatLngProcessing.getDistance(latLng, fareCounterBGP.getPrevLatLng());
-                    costing = PaymentProcessing.distanceToCosting(distance, PaymentProcessing.Discount.STUDENT);
+                    costing = PaymentProcessing.distanceToCosting(distance, setDiscount);
                 }
                 fareCounterBGP.addLatLngStack(latLng);
                 fareCounterBGP.addDistance(distance);

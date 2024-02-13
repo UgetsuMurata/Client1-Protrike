@@ -62,7 +62,7 @@ public class TOIScanner extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (FBDataCaller.isInternetAvailable()){
+                        if (FBDataCaller.isInternetAvailable(TOIScanner.this)){
                             FBDataCaller.qrToTricycleNumber(TOIScanner.this, result.toString(), new FBDataCaller.ReturnHandlerWithStatus() {
                                 @Override
                                 public void returnObject(Object object, Boolean status) {

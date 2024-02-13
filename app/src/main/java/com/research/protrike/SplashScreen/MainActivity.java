@@ -1,16 +1,12 @@
 package com.research.protrike.SplashScreen;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.Firebase;
 import com.google.firebase.database.DataSnapshot;
 import com.research.protrike.Application.Protrike;
 import com.research.protrike.CustomObjects.TricycleFareObject;
@@ -18,7 +14,6 @@ import com.research.protrike.CustomViews.ProtrikeLoadingBar;
 import com.research.protrike.DataManager.FBDataCaller;
 import com.research.protrike.DataManager.FBDataCaller.TFSnapshots;
 import com.research.protrike.DataManager.FBDataCaller.TFSnapshots.TFSnapshotKey;
-import com.research.protrike.DataManager.FirebaseData;
 import com.research.protrike.DataManager.PaperDBHelper;
 import com.research.protrike.DataManager.SharedPref;
 import com.research.protrike.MainFeats.Dashboard;
@@ -32,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     ProtrikeLoadingBar display;
     Integer maxProcesses = 10;
     Protrike protrike;
-    FirebaseData firebaseData = new FirebaseData();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,26 +64,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Process1() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        protrike.setHasInternet(isConnected);
-        if (!isConnected) {
-            Toast.makeText(this, "Entering offline mode...", Toast.LENGTH_LONG).show();
+        protrike.setHasInternet(FBDataCaller.isInternetAvailable(this));
+        if (!protrike.hasInternet()) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MainActivity.this, "Entering offline mode...", Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
     private void Process2() {
-        if (protrike.getHasInternet()) {
+        if (protrike.hasInternet()) {
             final CountDownLatch latch = new CountDownLatch(2);
             FBDataCaller.getLastUpdateContacts(this, new FBDataCaller.ReturnHandler() {
                 @Override
                 public void returnObject(@NonNull Object object) {
-                    firebaseData.addValue("testing/before_shared_pref", "here");
                     String lastUpdated = SharedPref.readString(MainActivity.this, SharedPref.CONTACTS_LAST_UPDATE, "01/01/1994");
-                    firebaseData.addValue("testing/last_updated_sp", lastUpdated);
                     String onlineUpdate = object.toString();
-                    firebaseData.addValue("testing/online_update", onlineUpdate);
                     if (!onlineUpdate.equals(lastUpdated)) {
                         // Get newly updated data
                         FBDataCaller.getContacts(MainActivity.this, new FBDataCaller.ReturnHandler() {
@@ -116,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
                                 latch.countDown();
                             }
                         });
+                    } else {
+                        latch.countDown();
                     }
                 }
             });
@@ -166,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
                                 latch.countDown();
                             }
                         });
+                    } else {
+                        latch.countDown();
                     }
                 }
             });

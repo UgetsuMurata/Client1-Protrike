@@ -67,7 +67,7 @@ public class LatLngProcessing {
         criteria.setSpeedAccuracy(Criteria.ACCURACY_MEDIUM);
         locationManager.getBestProvider(criteria, true);
         locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 1000, 10, new LocationListener() {
+                LocationManager.GPS_PROVIDER, 1000, 5, new LocationListener() {
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
                         Log.d("LOCATION_CHANGED", String.format("new location found: %s %s", location.getLatitude(), location.getLongitude()));
