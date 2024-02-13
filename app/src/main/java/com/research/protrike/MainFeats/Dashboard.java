@@ -119,7 +119,7 @@ public class Dashboard extends AppCompatActivity {
         discounted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setDiscount = Discount.STUDENT;
+                setDiscount = Discount.DISCOUNTED;
                 if (fareButtonMode != FareButtonModes.start) {
                     updateLiveCounter();
                 }
@@ -164,7 +164,7 @@ public class Dashboard extends AppCompatActivity {
     }
 
     private void updateDiscountButtons(){
-        if (setDiscount == Discount.STUDENT){
+        if (setDiscount == Discount.DISCOUNTED){
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -212,13 +212,13 @@ public class Dashboard extends AppCompatActivity {
             @Override
             public void onLocationChanged(@NonNull LatLng latLng) {
                 float distance = 0f;
-                float costing = 0f;
                 if (fareCounterBGP.getPrevLatLng() != null) {
                     distance = LatLngProcessing.getDistance(latLng, fareCounterBGP.getPrevLatLng());
-                    costing = PaymentProcessing.distanceToCosting(distance, setDiscount);
                 }
                 fareCounterBGP.addLatLngStack(latLng);
                 fareCounterBGP.addDistance(distance);
+
+                float costing = PaymentProcessing.distanceToCosting(fareCounterBGP.getCurrentDistance(), setDiscount);
                 fareCounterBGP.setCurrentFare(costing);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -226,7 +226,7 @@ public class Dashboard extends AppCompatActivity {
                         if (fareCounterBGP.getCurrentDistance() > 1000) {
                             currentDistance.setText(String.format(Locale.getDefault(), "%.1fkm", fareCounterBGP.getCurrentDistance() / 1000));
                         } else if (fareCounterBGP.getCurrentDistance() > 100){
-                            currentDistance.setText(String.format(Locale.getDefault(), "%dm", (int) (Math.ceil(fareCounterBGP.getCurrentDistance()/100.0)*100)));
+                            currentDistance.setText(String.format(Locale.getDefault(), "%dm", (int) (Math.round(fareCounterBGP.getCurrentDistance()/100.0)*100)));
                         } else {
                             currentDistance.setText(String.format(Locale.getDefault(), "%dm", Math.round(fareCounterBGP.getCurrentDistance())));
                         }
