@@ -1,19 +1,30 @@
 package com.research.protrike.DataManager;
 
+import com.research.protrike.Application.Protrike;
+import com.research.protrike.Application.Protrike.ContactHolder;
+import com.research.protrike.CustomObjects.ContactsObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import io.paperdb.Paper;
 
 public class PaperDBHelper {
     public static class Contacts {
-        public static String LTO = "Contacts_LTO";
         public static String MDRRMO = "Contacts_MDRRMO";
         public static String PNP = "Contacts_PNP";
         public static String report = "Contacts_report";
 
-        public static void save(String key, String value) {
-            Paper.book().write(key, value);
+        public static void save(String key, ContactsObject contactsObject) {
+            Paper.book().write(key + "_name", contactsObject.getName());
+            Paper.book().write(key + "_number", contactsObject.getNumber());
+            Paper.book().write(key + "_message", contactsObject.getMessage());
         }
-        public static String get(String key, String defaultValue){
-            return Paper.book().read(key, defaultValue);
+
+        public static ContactsObject get(String key) {
+            return new ContactsObject(Paper.book().read(key + "_message", null),
+                    Paper.book().read(key + "_name", null),
+                    Paper.book().read(key + "_number", null));
         }
     }
 
@@ -22,48 +33,53 @@ public class PaperDBHelper {
         public static String DiscountedSucceeding = "TF_discounted_succeeding";
         public static String NormalStart = "TF_normal_start";
         public static String NormalSucceeding = "TF_normal_succeeding";
-        public static String ThreeToFiveStart = "TF_three_to_five_start";
-        public static String ThreeToFiveSucceeding = "TF_three_to_five_succeeding";
         public static String MinimumDistance = "TF_min_dist";
         public static String SucceedingDistance = "TF_succeeding_distance";
 
         public static void save(String key, Float value) {
             Paper.book().write(key, value);
         }
-        public static Float get(String key, Float defaultValue){
+
+        public static Float get(String key, Float defaultValue) {
             return Paper.book().read(key, defaultValue);
         }
     }
 
-    public static void saveContactsLTO(String value) {
-        Contacts.save(Contacts.LTO, value);
+    public static class ContactsStorage {
+        public static String count = "ContactsStorage_count";
+        public static String startingKeyName = "ContactStorage_name";
+        public static String startingKeyMessage = "ContactStorage_message";
+        public static String startingKeyNumber = "ContactStorage_number";
+
+        public static void save(ContactsObject contactsObject) {
+            int newSuffix = getCount(-1) + 1;
+            Paper.book().write(startingKeyName + newSuffix, contactsObject.getName());
+            Paper.book().write(startingKeyMessage + newSuffix, contactsObject.getMessage());
+            Paper.book().write(startingKeyNumber + newSuffix, contactsObject.getNumber());
+        }
+
+        public static ContactsObject get(Integer key) {
+            String name = Paper.book().read(startingKeyName + key, "");
+            String message = Paper.book().read(startingKeyMessage + key, "");
+            String number = Paper.book().read(startingKeyNumber + key, "");
+            return new ContactsObject(message, name, number);
+        }
+
+        public static Integer getCount(Integer defaultValue) {
+            return Paper.book().read(count, defaultValue);
+        }
     }
 
-    public static void saveContactsMDRRMO(String value) {
-        Contacts.save(Contacts.MDRRMO, value);
+    public static void saveContactsMDRRMO(ContactsObject contactsObject) {
+        Contacts.save(Contacts.MDRRMO, contactsObject);
     }
 
-    public static void saveContactsPNP(String value) {
-        Contacts.save(Contacts.PNP, value);
+    public static void saveContactsPNP(ContactsObject contactsObject) {
+        Contacts.save(Contacts.PNP, contactsObject);
     }
 
-    public static void saveContactsReport(String value) {
-        Contacts.save(Contacts.report, value);
-    }
-    public static String getContactsLTO(String value) {
-        return Contacts.get(Contacts.LTO, value);
-    }
-
-    public static String getContactsMDRRMO(String value) {
-        return Contacts.get(Contacts.MDRRMO, value);
-    }
-
-    public static String getContactsPNP(String value) {
-        return Contacts.get(Contacts.PNP, value);
-    }
-
-    public static String getContactsReport(String value) {
-        return Contacts.get(Contacts.report, value);
+    public static void saveContactsReport(ContactsObject contactsObject) {
+        Contacts.save(Contacts.report, contactsObject);
     }
 
     public static void saveMinDist(Float value) {
@@ -90,14 +106,6 @@ public class PaperDBHelper {
         TricycleFare.save(TricycleFare.NormalSucceeding, value);
     }
 
-    public static void saveTTFStart(Float value) {
-        TricycleFare.save(TricycleFare.ThreeToFiveStart, value);
-    }
-
-    public static void saveTTFSuc(Float value) {
-        TricycleFare.save(TricycleFare.ThreeToFiveSucceeding, value);
-    }
-
     public static Float getMinDist(Float value) {
         return TricycleFare.get(TricycleFare.MinimumDistance, value);
     }
@@ -122,11 +130,22 @@ public class PaperDBHelper {
         return TricycleFare.get(TricycleFare.NormalSucceeding, value);
     }
 
-    public static Float getTTFStart(Float value) {
-        return TricycleFare.get(TricycleFare.ThreeToFiveStart, value);
-    }
+    public static ContactHolder getContactHolder() {
+        ContactHolder contactHolder = new ContactHolder();
+        contactHolder.add(Contacts.get(Contacts.PNP));
+        contactHolder.add(Contacts.get(Contacts.MDRRMO));
+        contactHolder.add(Contacts.get(Contacts.report));
 
-    public static Float getTTFSuc(Float value) {
-        return TricycleFare.get(TricycleFare.ThreeToFiveSucceeding, value);
+        List<String> defaultContactsList = new ArrayList<>();
+        defaultContactsList.add(Contacts.get(Contacts.PNP).getName());
+        defaultContactsList.add(Contacts.get(Contacts.MDRRMO).getName());
+        defaultContactsList.add(Contacts.get(Contacts.report).getName());
+        Protrike protrike = Protrike.getInstance();
+        protrike.setDefaultContactsList(defaultContactsList);
+
+        for (int i = 0; i < ContactsStorage.getCount(-1); i++) {
+            contactHolder.add(ContactsStorage.get(i));
+        }
+        return contactHolder;
     }
 }

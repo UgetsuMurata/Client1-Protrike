@@ -2,10 +2,17 @@ package com.research.protrike.Application;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.maps.model.LatLng;
+import com.research.protrike.CustomObjects.ContactsObject;
 import com.research.protrike.CustomObjects.TricycleFareObject;
+import com.research.protrike.DataManager.PaperDBHelper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 import io.paperdb.Paper;
 
@@ -16,12 +23,17 @@ public class Protrike extends Application {
     private Boolean hasInternet;
     private TricycleFareObject tricycleFareObject;
 
+    private ContactHolder contactHolder;
+    private List<String> defaultContactsList;
+
     @Override
     public void onCreate() {
         super.onCreate();
         Paper.init(this);
         fareCounterBGP = new FareCounterBGP();
         tricycleFareObject = new TricycleFareObject();
+        contactHolder = new ContactHolder();
+        defaultContactsList = new ArrayList<>();
         instance = this;
     }
 
@@ -50,11 +62,28 @@ public class Protrike extends Application {
         this.hasInternet = hasInternet;
     }
 
-    public TricycleFareObject getTricycleFare(){
+    public TricycleFareObject getTricycleFare() {
         return tricycleFareObject;
     }
-    public void setTricycleFare(TricycleFareObject tricycleFareObject){
+
+    public void setTricycleFare(TricycleFareObject tricycleFareObject) {
         this.tricycleFareObject = tricycleFareObject;
+    }
+
+    public ContactHolder getContactHolder() {
+        return contactHolder;
+    }
+
+    public void setContactHolder(ContactHolder contactHolder) {
+        this.contactHolder = contactHolder;
+    }
+
+    public List<String> getDefaultContactsList() {
+        return defaultContactsList;
+    }
+
+    public void setDefaultContactsList(List<String> defaultContactsList) {
+        this.defaultContactsList = defaultContactsList;
     }
 
     public static class FareCounterBGP {
@@ -98,4 +127,59 @@ public class Protrike extends Application {
             prevLatLng = null;
         }
     }
+
+    public static class ContactHolder {
+        private List<ContactsObject> contactsObjects;
+
+        public ContactHolder(List<ContactsObject> contactsObjects) {
+            this.contactsObjects = contactsObjects;
+        }
+
+        public ContactHolder() {
+            contactsObjects = new ArrayList<>();
+        }
+
+        public void add(ContactsObject contactsObject) {
+            contactsObjects.add(contactsObject);
+        }
+
+        public void remove(ContactsObject contactsObject) {
+            contactsObjects.remove(contactsObject);
+        }
+
+        public void remove(int index) {
+            contactsObjects.remove(index);
+        }
+
+        public int size() {
+            return contactsObjects.size();
+        }
+
+        public void clear() {
+            contactsObjects.clear();
+        }
+
+        public void addAll(ContactHolder contactHolder1){
+            contactsObjects.addAll(contactHolder1.getRaw());
+        }
+
+        public List<ContactsObject> getRaw(){
+            return contactsObjects;
+        }
+
+        public ContactsObject get(int index) {
+            return contactsObjects.get(index);
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            String generatedString = "";
+            for (int i = 0; i < size(); i++){
+                generatedString = String.format(Locale.getDefault(), "%s   %d:{name:%s, number:%s, message:%s}", generatedString, i, get(i).getName(), get(i).getNumber(), get(i).getMessage());
+            }
+            return generatedString.trim();
+        }
+    }
+
 }

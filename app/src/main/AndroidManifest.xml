@@ -5,12 +5,16 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <application
         android:name=".Application.Protrike"
@@ -23,6 +27,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Protrike"
         tools:targetApi="31">
+        <activity
+            android:name=".MainFeats.Contacts.Contacts"
+            android:exported="false" />
+        <activity
+            android:name=".MainFeats.Contacts.NewContact"
+            android:exported="false" />
         <activity
             android:name=".MainFeats.TOIScanner"
             android:exported="false" />

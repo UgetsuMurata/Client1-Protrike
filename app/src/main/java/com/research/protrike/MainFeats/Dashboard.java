@@ -23,6 +23,7 @@ import com.research.protrike.DataTypes.OperatorInfo;
 import com.research.protrike.HelperFunctions.LatLngProcessing;
 import com.research.protrike.HelperFunctions.PaymentProcessing;
 import com.research.protrike.HelperFunctions.PaymentProcessing.Discount;
+import com.research.protrike.MainFeats.Contacts.Contacts;
 import com.research.protrike.R;
 
 import java.text.SimpleDateFormat;
@@ -41,6 +42,7 @@ public class Dashboard extends AppCompatActivity {
     TextView discounted, noDiscount;
     Protrike.FareCounterBGP fareCounterBGP;
     Discount setDiscount = Discount.NONE;
+    ImageView emergencyMessage;
 
     private enum FareButtonModes {
         start, end, pay
@@ -91,6 +93,7 @@ public class Dashboard extends AppCompatActivity {
         fareCounterButtonDescription = findViewById(R.id.button_description);
         discounted = findViewById(R.id.discounted);
         noDiscount = findViewById(R.id.no_discount);
+        emergencyMessage = findViewById(R.id.emergency_message);
 
         protrike = Protrike.getInstance();
         fareCounterBGP = protrike.getFareCounterBGP();
@@ -161,6 +164,13 @@ public class Dashboard extends AppCompatActivity {
                     break;
             }
         });
+        emergencyMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Dashboard.this, Contacts.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void updateDiscountButtons(){
@@ -219,7 +229,10 @@ public class Dashboard extends AppCompatActivity {
                 fareCounterBGP.addDistance(distance);
 
                 float costing = PaymentProcessing.distanceToCosting(fareCounterBGP.getCurrentDistance(), setDiscount);
+                System.out.println("Current Distance: " + fareCounterBGP.getCurrentDistance());
+                System.out.println("Costing: " + costing);
                 fareCounterBGP.setCurrentFare(costing);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

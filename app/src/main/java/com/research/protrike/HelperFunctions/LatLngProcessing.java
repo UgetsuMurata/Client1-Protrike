@@ -10,12 +10,15 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.concurrent.CountDownLatch;
 
 public class LatLngProcessing {
 
@@ -87,5 +90,53 @@ public class LatLngProcessing {
                     public void onProviderDisabled(String provider) {
                     }
                 });
+    }
+
+    public static LatLng getCurrentLocation(Context context) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final LatLng[] resultLatLng = new LatLng[1];
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(context, "Please turn your GPS on.", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        Criteria criteria = new Criteria();
+        criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        criteria.setVerticalAccuracy(Criteria.ACCURACY_LOW);
+        criteria.setBearingAccuracy(Criteria.ACCURACY_MEDIUM);
+        criteria.setSpeedAccuracy(Criteria.ACCURACY_MEDIUM);
+        locationManager.getBestProvider(criteria, true);
+        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,  new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                resultLatLng[0] = new LatLng(location.getLatitude(), location.getLongitude());
+                latch.countDown();
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+        }, null);
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return resultLatLng[0];
     }
 }

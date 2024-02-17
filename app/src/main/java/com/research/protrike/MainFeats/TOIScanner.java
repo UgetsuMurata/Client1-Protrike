@@ -36,6 +36,8 @@ public class TOIScanner extends AppCompatActivity {
     Boolean scannerState = false;
     String tricycleNumber;
 
+    String mode = "normal";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +48,11 @@ public class TOIScanner extends AppCompatActivity {
 
         scannerLabel.setText("Status: Scanning...");
         scannerLabel.setTextColor(ContextCompat.getColor(TOIScanner.this, android.R.color.black));
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("number_only")){
+            mode = "number_only";
+        }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
@@ -62,6 +69,10 @@ public class TOIScanner extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if ("number_only".equals(mode)){
+
+                            return;
+                        }
                         if (FBDataCaller.isInternetAvailable(TOIScanner.this)){
                             FBDataCaller.qrToTricycleNumber(TOIScanner.this, result.toString(), new FBDataCaller.ReturnHandlerWithStatus() {
                                 @Override

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.research.protrike.Application.Protrike;
+import com.research.protrike.CustomObjects.ContactsObject;
 import com.research.protrike.CustomObjects.TricycleFareObject;
 import com.research.protrike.CustomViews.ProtrikeLoadingBar;
 import com.research.protrike.DataManager.FBDataCaller;
@@ -19,6 +20,8 @@ import com.research.protrike.DataManager.SharedPref;
 import com.research.protrike.MainFeats.Dashboard;
 import com.research.protrike.R;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -89,23 +92,30 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void returnObject(@NonNull Object object) {
                                 DataSnapshot dataSnapshot = (DataSnapshot) object;
-                                Object LTOObject = dataSnapshot.child("LTO").getValue();
-                                Object MDRRMOObject = dataSnapshot.child("MDRRMO").getValue();
-                                Object PNPObject = dataSnapshot.child("PNP").getValue();
-                                Object reportObject = dataSnapshot.child("report").getValue();
-                                if (LTOObject != null) {
-                                    PaperDBHelper.saveContactsLTO(LTOObject.toString());
+                                List<String> defaultContactsList = new ArrayList<>();
+                                Object MDRRMONameObject = dataSnapshot.child("MDRRMO/Name").getValue();
+                                Object MDRRMONumberObject = dataSnapshot.child("MDRRMO/Number").getValue();
+                                Object MDRRMOMessageObject = dataSnapshot.child("MDRRMO/Message").getValue();
+                                Object PNPNameObject = dataSnapshot.child("PNP/Name").getValue();
+                                Object PNPNumberObject = dataSnapshot.child("PNP/Number").getValue();
+                                Object PNPMessageObject = dataSnapshot.child("PNP/Message").getValue();
+                                Object reportNameObject = dataSnapshot.child("report/Name").getValue();
+                                Object reportNumberObject = dataSnapshot.child("report/Number").getValue();
+                                Object reportMessageObject = dataSnapshot.child("report/Message").getValue();
+                                if (MDRRMONumberObject != null && MDRRMOMessageObject != null && MDRRMONameObject != null) {
+                                    PaperDBHelper.saveContactsMDRRMO(new ContactsObject(MDRRMOMessageObject.toString(), MDRRMONameObject.toString(), MDRRMONumberObject.toString()));
+                                    defaultContactsList.add(MDRRMONameObject.toString());
                                 }
-                                if (MDRRMOObject != null) {
-                                    PaperDBHelper.saveContactsMDRRMO(MDRRMOObject.toString());
+                                if (PNPNumberObject != null && PNPMessageObject != null && PNPNameObject != null) {
+                                    PaperDBHelper.saveContactsPNP(new ContactsObject(PNPMessageObject.toString(), PNPNameObject.toString(), PNPNumberObject.toString()));
+                                    defaultContactsList.add(PNPNameObject.toString());
                                 }
-                                if (PNPObject != null) {
-                                    PaperDBHelper.saveContactsPNP(PNPObject.toString());
-                                }
-                                if (reportObject != null) {
-                                    PaperDBHelper.saveContactsReport(reportObject.toString());
+                                if (reportNumberObject != null && reportMessageObject != null && reportNameObject != null) {
+                                    PaperDBHelper.saveContactsReport(new ContactsObject(reportMessageObject.toString(), reportNameObject.toString(), reportNumberObject.toString()));
+                                    defaultContactsList.add(reportNameObject.toString());
                                 }
                                 SharedPref.write(MainActivity.this, SharedPref.CONTACTS_LAST_UPDATE, onlineUpdate);
+                                protrike.setDefaultContactsList(defaultContactsList);
                                 latch.countDown();
                             }
                         });
@@ -131,8 +141,6 @@ public class MainActivity extends AppCompatActivity {
                                 Object discSucceedingFareObj = dataSnapshot.get(TFSnapshotKey.DISCOUNTED_SUCCEEDING_FARE).getValue();
                                 Object normStartingFareObj = dataSnapshot.get(TFSnapshotKey.NORMAL_STARTING_FARE).getValue();
                                 Object normSucceedingFareObj = dataSnapshot.get(TFSnapshotKey.NORMAL_SUCCEEDING_FARE).getValue();
-                                Object tToFStartingFareObj = dataSnapshot.get(TFSnapshotKey.THREE_TO_FIVE_STARTING_FARE).getValue();
-                                Object tToFSucceedingFareObj = dataSnapshot.get(TFSnapshotKey.THREE_TO_FIVE_SUCCEEDING_FARE).getValue();
                                 if (minFareDistObj != null) {
                                     PaperDBHelper.saveMinDist(Float.parseFloat(minFareDistObj.toString()));
                                 }
@@ -151,12 +159,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (normSucceedingFareObj != null) {
                                     PaperDBHelper.saveNorSuc(Float.parseFloat(normSucceedingFareObj.toString()));
                                 }
-                                if (tToFStartingFareObj != null) {
-                                    PaperDBHelper.saveTTFStart(Float.parseFloat(tToFStartingFareObj.toString()));
-                                }
-                                if (tToFSucceedingFareObj != null) {
-                                    PaperDBHelper.saveTTFSuc(Float.parseFloat(tToFSucceedingFareObj.toString()));
-                                }
                                 SharedPref.write(MainActivity.this, SharedPref.TRICYCLE_FARE_LAST_UPDATE, onlineUpdate);
                                 latch.countDown();
                             }
@@ -172,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        protrike.setContactHolder(PaperDBHelper.getContactHolder());
     }
 
     private void Process3() {
@@ -186,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
             tricycleFareObject.put(TricycleFareObject.TF.DISCOUNTED_SUCCEEDING_FARE, PaperDBHelper.getDisSuc(1.6f));
             tricycleFareObject.put(TricycleFareObject.TF.NORMAL_STARTING_FARE, PaperDBHelper.getNorStart(15f));
             tricycleFareObject.put(TricycleFareObject.TF.NORMAL_SUCCEEDING_FARE, PaperDBHelper.getNorSuc(2f));
-            tricycleFareObject.put(TricycleFareObject.TF.THREE_TO_FIVE_STARTING_FARE, PaperDBHelper.getTTFStart(7f));
             tricycleFareObject.put(TricycleFareObject.TF.THREE_TO_FIVE_SUCCEEDING_FARE, PaperDBHelper.getSucDist(2f));
         } else {
             runOnUiThread(new Runnable() {
