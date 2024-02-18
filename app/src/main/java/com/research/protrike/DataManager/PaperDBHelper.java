@@ -56,6 +56,22 @@ public class PaperDBHelper {
             Paper.book().write(startingKeyName + newSuffix, contactsObject.getName());
             Paper.book().write(startingKeyMessage + newSuffix, contactsObject.getMessage());
             Paper.book().write(startingKeyNumber + newSuffix, contactsObject.getNumber());
+            Paper.book().write(count, newSuffix);
+        }
+
+        public static void save(int index, ContactsObject contactsObject) {
+            Paper.book().write(startingKeyName + index, contactsObject.getName());
+            Paper.book().write(startingKeyMessage + index, contactsObject.getMessage());
+            Paper.book().write(startingKeyNumber + index, contactsObject.getNumber());
+        }
+
+        public static int getIndexFromNumber(String number) {
+            for (int i = 0; i < ContactsStorage.getCount(-1); i++) {
+                if (get(i).getNumber().equals(number)) {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         public static ContactsObject get(Integer key) {
@@ -143,9 +159,21 @@ public class PaperDBHelper {
         Protrike protrike = Protrike.getInstance();
         protrike.setDefaultContactsList(defaultContactsList);
 
-        for (int i = 0; i < ContactsStorage.getCount(-1); i++) {
+        for (int i = 0; i < ContactsStorage.getCount(-1) + 1; i++) {
             contactHolder.add(ContactsStorage.get(i));
         }
         return contactHolder;
+    }
+
+    public static void saveContact(ContactsObject contactsObject){
+        ContactsStorage.save(contactsObject);
+    }
+
+    public static void saveContact(int index, ContactsObject contactsObject){
+        ContactsStorage.save(index, contactsObject);
+    }
+
+    public static int getIndexFromNumber(String number){
+        return ContactsStorage.getIndexFromNumber(number);
     }
 }

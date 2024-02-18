@@ -2,11 +2,13 @@ package com.research.protrike.MainFeats.Contacts;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.telephony.SmsManager;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ public class Contacts extends AppCompatActivity {
     private Protrike protrike;
     private ContactHolder contactHolder;
     private ContactsAdapter contactsAdapter;
+    private CardView addContact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,7 @@ public class Contacts extends AppCompatActivity {
         setContentView(R.layout.activity_contacts);
 
         contactsView = findViewById(R.id.contacts);
+        addContact = findViewById(R.id.add_contact);
 
         protrike = Protrike.getInstance();
         contactHolder = protrike.getContactHolder();
@@ -69,6 +73,13 @@ public class Contacts extends AppCompatActivity {
         contactsView.setLayoutManager(llm);
         contactsView.setAdapter(contactsAdapter);
         checkForPermissions();
+
+        addContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), NewContact.class));
+            }
+        });
     }
 
     protected void checkForPermissions() {

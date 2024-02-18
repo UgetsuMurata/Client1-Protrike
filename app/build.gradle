@@ -23,6 +23,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    applicationVariants.configureEach {
+        variant ->
+            variant.outputs.each{
+                output->
+                    def name = "Protrike v0.0.20240218a.apk"
+                    output.outputFileName = name
+            }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

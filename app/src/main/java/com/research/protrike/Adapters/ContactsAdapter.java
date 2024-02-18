@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.research.protrike.Application.Protrike.ContactHolder;
+import com.research.protrike.HelperFunctions.CharacterCode;
 import com.research.protrike.MainFeats.Contacts.NewContact;
 import com.research.protrike.R;
 
@@ -49,9 +50,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     public void onBindViewHolder(@NonNull ContactsAdapterHolder holder, int position) {
         final String name = contactHolder.get(position).getName();
         final String number = contactHolder.get(position).getNumber();
-        final String message = contactHolder.get(position).getMessage()
-                .replace("@app:location", "\uD83D\uDCCD")
-                .replace("@app:tricycle_number", "\uD83E\uDEAA");
+        final String message = CharacterCode.messageEncode(contactHolder.get(position).getMessage());
         final int current_position = position;
 
         holder.contactName.setText(name);
@@ -70,9 +69,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         holder.deleteMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContactHolder oldContactHolder = contactHolder;
-                contactHolder.clear();
+                ContactHolder oldContactHolder = new ContactHolder(contactHolder);
                 oldContactHolder.remove(current_position);
+                contactHolder.clear();
                 contactHolder.addAll(contactHolder);
                 notifyItemRemoved(current_position);
             }

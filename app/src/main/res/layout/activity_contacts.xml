@@ -63,25 +63,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                tools:listitem="@layout/recyclerview_emergency_alert"
-                android:layout_marginTop="20dp" />
+                android:layout_marginTop="20dp"
+                tools:listitem="@layout/recyclerview_emergency_alert" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/add_contact"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                app:cardCornerRadius="10dp"
                 android:layout_margin="20dp"
+                app:cardCornerRadius="10dp"
                 app:strokeWidth="1dp">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="+"
-                    android:textSize="20sp"
+                    android:background="@color/bg"
                     android:fontFamily="@font/quicksand"
                     android:gravity="center"
-                    android:textStyle="bold"
-                    android:background="@color/bg"/>
+                    android:text="+"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </ScrollView>

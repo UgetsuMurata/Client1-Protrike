@@ -135,6 +135,10 @@ public class Protrike extends Application {
             this.contactsObjects = contactsObjects;
         }
 
+        public ContactHolder(ContactHolder contactHolder) {
+            this.contactsObjects = new ArrayList<>(contactHolder.getRaw());
+        }
+
         public ContactHolder() {
             contactsObjects = new ArrayList<>();
         }
@@ -159,11 +163,11 @@ public class Protrike extends Application {
             contactsObjects.clear();
         }
 
-        public void addAll(ContactHolder contactHolder1){
+        public void addAll(ContactHolder contactHolder1) {
             contactsObjects.addAll(contactHolder1.getRaw());
         }
 
-        public List<ContactsObject> getRaw(){
+        public List<ContactsObject> getRaw() {
             return contactsObjects;
         }
 
@@ -171,11 +175,33 @@ public class Protrike extends Application {
             return contactsObjects.get(index);
         }
 
+        public int getIndexOfNumber(String number) {
+            int index = 0;
+            for (ContactsObject contactsObject : contactsObjects) {
+                if (contactsObject.getNumber().equals(number)) return index;
+                index++;
+            }
+            return -1;
+        }
+
+        public void replace(int index, ContactsObject contactsObject) {
+            contactsObjects.remove(index);
+            contactsObjects.add(index, contactsObject);
+        }
+
+        public List<String> getNumbers() {
+            List<String> numbers = new ArrayList<>();
+            for (ContactsObject contactsObject : contactsObjects) {
+                numbers.add(contactsObject.getNumber());
+            }
+            return numbers;
+        }
+
         @NonNull
         @Override
         public String toString() {
             String generatedString = "";
-            for (int i = 0; i < size(); i++){
+            for (int i = 0; i < size(); i++) {
                 generatedString = String.format(Locale.getDefault(), "%s   %d:{name:%s, number:%s, message:%s}", generatedString, i, get(i).getName(), get(i).getNumber(), get(i).getMessage());
             }
             return generatedString.trim();
