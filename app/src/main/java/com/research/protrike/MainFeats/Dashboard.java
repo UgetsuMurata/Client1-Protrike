@@ -106,6 +106,7 @@ public class Dashboard extends AppCompatActivity {
 
         qrScanner.setOnClickListener(view -> {
             Intent intent = new Intent(this, TOIScanner.class);
+            intent.putExtra("FROM_DASHBOARD", true);
             scanQR.launch(intent);
         });
 

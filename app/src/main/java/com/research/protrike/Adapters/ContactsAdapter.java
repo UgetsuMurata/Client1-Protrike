@@ -28,13 +28,12 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     List<String> defaultContactsList;
 
     public interface MessageCallback {
-        void SendMessage(String number, String message);
+        void SendMessage(String name, String number, String message);
     }
 
-    public ContactsAdapter(Context context, ContactHolder contactHolder, List<String> defaultContactsList, MessageCallback messageCallback) {
+    public ContactsAdapter(Context context, ContactHolder contactHolder, List<String> defaultContactsList) {
         this.context = context;
         this.contactHolder = contactHolder;
-        this.callback = messageCallback;
         this.defaultContactsList = defaultContactsList;
     }
 
@@ -44,6 +43,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     public ContactsAdapterHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.recyclerview_emergency_alert, parent, false);
         return new ContactsAdapterHolder(view);
+    }
+
+    public void onSendMessage(MessageCallback messageCallback){
+        this.callback = messageCallback;
     }
 
     @Override
@@ -56,8 +59,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         holder.contactName.setText(name);
         holder.contactNumber.setText(number);
         holder.contactMessage.setText(message);
-
-        System.out.printf("onBindViewHolder Position #%d: Text set!%n", current_position);
 
         // hide edit and delete buttons for default numbers.
         if (defaultContactsList.contains(name)){
@@ -91,7 +92,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         holder.sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callback.SendMessage(number, message);
+                callback.SendMessage(name, number, message);
             }
         });
     }

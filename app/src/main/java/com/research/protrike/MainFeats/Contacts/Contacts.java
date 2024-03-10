@@ -1,5 +1,7 @@
 package com.research.protrike.MainFeats.Contacts;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -22,6 +24,7 @@ import com.research.protrike.Adapters.ContactsAdapter;
 import com.research.protrike.Application.Protrike;
 import com.research.protrike.Application.Protrike.ContactHolder;
 import com.research.protrike.HelperFunctions.LatLngProcessing;
+import com.research.protrike.MainFeats.TOIScanner;
 import com.research.protrike.R;
 
 public class Contacts extends AppCompatActivity {
@@ -32,6 +35,21 @@ public class Contacts extends AppCompatActivity {
     private ContactHolder contactHolder;
     private ContactsAdapter contactsAdapter;
     private CardView addContact;
+    private SmsManager smsManager;
+    private final ActivityResultLauncher<Intent> qrLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK){
+                    Intent intent = result.getData();
+                    if (intent == null) return;
+                    String message = intent.getStringExtra("MESSAGE");
+                    String number = intent.getStringExtra("NUMBER");
+                    String name = intent.getStringExtra("NAME");
+                    smsManager.sendTextMessage(number, null, message, null, null);
+                    Toast.makeText(getApplicationContext(), String.format("Message sent to %s.", name), Toast.LENGTH_LONG).show();
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,37 +61,43 @@ public class Contacts extends AppCompatActivity {
 
         protrike = Protrike.getInstance();
         contactHolder = protrike.getContactHolder();
+        smsManager = SmsManager.getDefault();
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        contactsAdapter = new ContactsAdapter(this, contactHolder, protrike.getDefaultContactsList(), new ContactsAdapter.MessageCallback() {
+        contactsAdapter = new ContactsAdapter(this, contactHolder, protrike.getDefaultContactsList());
+        contactsView.setLayoutManager(llm);
+        contactsView.setAdapter(contactsAdapter);
+        checkForPermissions();
+
+        contactsAdapter.onSendMessage(new ContactsAdapter.MessageCallback() {
             @Override
-            public void SendMessage(String number, String message) {
+            public void SendMessage(String name, String number, String message) {
                 if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-                    SmsManager smsManager = SmsManager.getDefault();
                     if (message.contains("@app:location")) {
                         LatLng latLng = LatLngProcessing.getCurrentLocation(Contacts.this);
                         if (latLng != null) {
                             String newMessage = String.format("https://www.google.com/maps/search/?api=1&query=%s,%s", latLng.latitude, latLng.longitude);
                             message = message.replace("@app:location", newMessage);
-                            smsManager.sendTextMessage(number, null, message, null, null);
                         }
-                    } else if (message.contains("@app:tricycle_number")) {
-                        // TODO: getting tricycle number from here.
-
-                    } else {
-                        smsManager.sendTextMessage(number, null, message, null, null);
                     }
-                    Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                    if (message.contains("@app:tricycle_number")) {
+                        Intent intent = new Intent(getApplicationContext(), TOIScanner.class);
+                        intent.putExtra("FROM_CONTACTS", true);
+                        intent.putExtra("MESSAGE", message);
+                        intent.putExtra("NUMBER", number);
+                        intent.putExtra("NAME", name);
+                        qrLauncher.launch(intent);
+                    } else { // if the message doesn't contain tricycle number, it should send.
+                        smsManager.sendTextMessage(number, null, message, null, null);
+                        Toast.makeText(getApplicationContext(), String.format("Message sent to %s.", name), Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "You need to grant permissions to access this feature.", Toast.LENGTH_LONG).show();
+                    checkForPermissions();
                 }
             }
         });
-        contactsView.setLayoutManager(llm);
-        contactsView.setAdapter(contactsAdapter);
-        checkForPermissions();
-
         addContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -23,6 +23,7 @@ import com.google.zxing.Result;
 import com.research.protrike.DataManager.FBDataCaller;
 import com.research.protrike.DataManager.FirebaseData;
 import com.research.protrike.DataTypes.OperatorInfo;
+import com.research.protrike.MainFeats.Contacts.Contacts;
 import com.research.protrike.R;
 
 import java.util.Objects;
@@ -83,10 +84,31 @@ public class TOIScanner extends AppCompatActivity {
                                         scannerLabel.setText("Status: Success!");
                                         scannerLabel.setTextColor(ContextCompat.getColor(TOIScanner.this, R.color.blue));
                                         handler.postDelayed(() -> {
-                                            Intent returnIntent = new Intent(TOIScanner.this, Dashboard.class);
-                                            returnIntent.putExtra("TRICYCLE_NUMBER", tricycleNumber);
-                                            setResult(Activity.RESULT_OK, returnIntent);
-                                            finish();
+                                            if (getIntent().hasExtra("FROM_DASHBOARD")){ //only Dashboard.class gives an extra named "FROM_DASHBOARD"
+                                                Intent returnIntent = new Intent(TOIScanner.this, Dashboard.class);
+                                                returnIntent.putExtra("TRICYCLE_NUMBER", tricycleNumber);
+                                                setResult(Activity.RESULT_OK, returnIntent);
+                                                finish();
+                                            } else if (getIntent().hasExtra("FROM_CONTACTS")){
+                                                Intent intent = getIntent();
+                                                String message = intent.getStringExtra("MESSAGE");
+                                                String number = intent.getStringExtra("NUMBER");
+                                                String name = intent.getStringExtra("NAME");
+                                                if (message == null) {
+                                                    setResult(Activity.RESULT_CANCELED);
+                                                    finish();
+                                                    return;
+                                                }
+                                                message = message.replace("@app:tricycle_number", tricycleNumber);
+
+                                                Intent newIntent = new Intent(getApplicationContext(), Contacts.class);
+                                                newIntent.putExtra("MESSAGE", message);
+                                                newIntent.putExtra("NUMBER", number);
+                                                newIntent.putExtra("NAME", name);
+                                                setResult(Activity.RESULT_OK, newIntent);
+                                                finish();
+                                            }
+
                                         }, 500);
                                     } else {
                                         scannerLabel.setText("Status: Failed");
