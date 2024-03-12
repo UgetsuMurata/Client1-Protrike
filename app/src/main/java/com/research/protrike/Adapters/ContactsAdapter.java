@@ -2,7 +2,6 @@ package com.research.protrike.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,22 +12,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.research.protrike.Application.Protrike.ContactHolder;
+import com.research.protrike.CustomObjects.ContactsObject;
 import com.research.protrike.HelperFunctions.CharacterCode;
 import com.research.protrike.MainFeats.Contacts.NewContact;
 import com.research.protrike.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsAdapterHolder> {
 
     Context context;
     ContactHolder contactHolder;
-    MessageCallback callback;
+    ContactsCallback contactCallback;
     List<String> defaultContactsList;
 
-    public interface MessageCallback {
+    public interface ContactsCallback {
         void SendMessage(String name, String number, String message);
+        void deleted(ContactsObject contactsObject);
+        void edit(Intent intent);
     }
 
     public ContactsAdapter(Context context, ContactHolder contactHolder, List<String> defaultContactsList) {
@@ -37,7 +38,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         this.defaultContactsList = defaultContactsList;
     }
 
-
     @NonNull
     @Override
     public ContactsAdapterHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,10 +45,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         return new ContactsAdapterHolder(view);
     }
 
-    public void onSendMessage(MessageCallback messageCallback){
-        this.callback = messageCallback;
+    public void onContactCallback(ContactsCallback contactCallback){
+        this.contactCallback = contactCallback;
     }
-
     @Override
     public void onBindViewHolder(@NonNull ContactsAdapterHolder holder, int position) {
         final String name = contactHolder.get(position).getName();
@@ -70,11 +69,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         holder.deleteMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContactHolder oldContactHolder = new ContactHolder(contactHolder);
-                oldContactHolder.remove(current_position);
-                contactHolder.clear();
-                contactHolder.addAll(contactHolder);
-                notifyItemRemoved(current_position);
+                contactCallback.deleted(contactHolder.get(current_position));
             }
         });
 
@@ -82,17 +77,20 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, NewContact.class);
+                intent.putExtra("MODE", "edit");
                 intent.putExtra("CONTACT_NAME", name);
                 intent.putExtra("CONTACT_NUMBER", number);
                 intent.putExtra("CONTACT_MESSAGE", message);
-                context.startActivity(intent);
+
+                contactCallback.edit(intent);
             }
         });
 
         holder.sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callback.SendMessage(name, number, message);
+                String newMessage = CharacterCode.messageDecode(message);
+                contactCallback.SendMessage(name, number, newMessage);
             }
         });
     }

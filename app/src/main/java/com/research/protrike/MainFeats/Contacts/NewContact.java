@@ -3,12 +3,14 @@ package com.research.protrike.MainFeats.Contacts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,8 +66,15 @@ public class NewContact extends AppCompatActivity {
 
         insertLocation.setOnClickListener(v -> {
             String message = CharacterCode.messageDecode(contactMessage.getText().toString());
+            if (!message.endsWith(" ")){
+                message += " ";
+            }
             message += CharacterCode.LOCATION_DECODE;
             contactMessage.setText(CharacterCode.messageEncode(message));
+            contactMessage.requestFocus();
+            contactMessage.setSelection(contactMessage.getText().length());
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(contactMessage, InputMethodManager.SHOW_IMPLICIT);
         });
         insertTricycleNumber.setOnClickListener(v -> {
             String message = CharacterCode.messageDecode(contactMessage.getText().toString());
@@ -74,8 +83,11 @@ public class NewContact extends AppCompatActivity {
             }
             message += CharacterCode.TRICYCLE_NUMBER_DECODE;
             contactMessage.setText(CharacterCode.messageEncode(message));
+            contactMessage.requestFocus();
+            contactMessage.setSelection(contactMessage.getText().length());
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(contactMessage, InputMethodManager.SHOW_IMPLICIT);
         });
-
     }
 
     private void saveContact() {
@@ -92,7 +104,7 @@ public class NewContact extends AppCompatActivity {
         } else if (message.equals("")){
             Toast.makeText(this, "Insert message.", Toast.LENGTH_SHORT).show();
             return;
-        } else if (numbers.contains(number)){
+        } else if (numbers.contains(number) && "NEW".equals(mode)){
             Toast.makeText(this, "Number already added! Please insert a new one when adding.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -120,7 +132,9 @@ public class NewContact extends AppCompatActivity {
                 }
                 break;
         }
-        onBackPressed();
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
 

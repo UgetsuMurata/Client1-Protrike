@@ -66,8 +66,9 @@ public class PaperDBHelper {
         }
 
         public static int getIndexFromNumber(String number) {
-            for (int i = 0; i < ContactsStorage.getCount(-1); i++) {
-                if (get(i).getNumber().equals(number)) {
+            for (int i = 0; i <= ContactsStorage.getCount(-1); i++) {
+                String referenceNumber = get(i).getNumber();
+                if (referenceNumber.equals(number)) {
                     return i;
                 }
             }
@@ -83,6 +84,15 @@ public class PaperDBHelper {
 
         public static Integer getCount(Integer defaultValue) {
             return Paper.book().read(count, defaultValue);
+        }
+
+        public static void remove(ContactsObject contactsObject) {
+            int key = getIndexFromNumber(contactsObject.getNumber());
+            if (key == -1) return;
+            Paper.book().delete(startingKeyName + key);
+            Paper.book().delete(startingKeyMessage + key);
+            Paper.book().delete(startingKeyNumber + key);
+            Paper.book().write(count, getCount(0)-1);
         }
     }
 
@@ -175,5 +185,9 @@ public class PaperDBHelper {
 
     public static int getIndexFromNumber(String number){
         return ContactsStorage.getIndexFromNumber(number);
+    }
+
+    public static void removeContact(ContactsObject contactsObject){
+        ContactsStorage.remove(contactsObject);
     }
 }
