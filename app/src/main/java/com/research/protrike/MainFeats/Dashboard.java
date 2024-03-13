@@ -174,8 +174,8 @@ public class Dashboard extends AppCompatActivity {
         });
     }
 
-    private void updateDiscountButtons(){
-        if (setDiscount == Discount.DISCOUNTED){
+    private void updateDiscountButtons() {
+        if (setDiscount == Discount.DISCOUNTED) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -185,7 +185,7 @@ public class Dashboard extends AppCompatActivity {
                     discounted.setTextColor(Dashboard.this.getResources().getColor(android.R.color.white, getTheme()));
                 }
             });
-        } else if (setDiscount == Discount.NONE){
+        } else if (setDiscount == Discount.NONE) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -219,7 +219,7 @@ public class Dashboard extends AppCompatActivity {
     }
 
     private void updateLiveCounter() {
-        LatLngProcessing.getCurrentLocation(this, new LatLngProcessing.LocationCallback() {
+        boolean gettingLocation = LatLngProcessing.getCurrentLocation(this, new LatLngProcessing.LocationCallback() {
             @Override
             public void onLocationChanged(@NonNull LatLng latLng) {
                 float distance = 0f;
@@ -239,8 +239,8 @@ public class Dashboard extends AppCompatActivity {
                     public void run() {
                         if (fareCounterBGP.getCurrentDistance() > 1000) {
                             currentDistance.setText(String.format(Locale.getDefault(), "%.1fkm", fareCounterBGP.getCurrentDistance() / 1000));
-                        } else if (fareCounterBGP.getCurrentDistance() > 100){
-                            currentDistance.setText(String.format(Locale.getDefault(), "%dm", (int) (Math.round(fareCounterBGP.getCurrentDistance()/100.0)*100)));
+                        } else if (fareCounterBGP.getCurrentDistance() > 100) {
+                            currentDistance.setText(String.format(Locale.getDefault(), "%dm", (int) (Math.round(fareCounterBGP.getCurrentDistance() / 100.0) * 100)));
                         } else {
                             currentDistance.setText(String.format(Locale.getDefault(), "%dm", Math.round(fareCounterBGP.getCurrentDistance())));
                         }
@@ -249,6 +249,16 @@ public class Dashboard extends AppCompatActivity {
                 });
             }
         });
+        if (!gettingLocation) {
+            fareCounterBGP.reset();
+            startedAt.setText("--");
+            endedAt.setText("--");
+            fareCounterButtonText.setText("Start");
+            fareCounterButtonDescription.setText("Click “Start” immediately once the tricycle leaves.");
+            fareButtonMode = FareButtonModes.start;
+            currentDistance.setText("-- km");
+            currentFare.setText("₱ --");
+        }
     }
 
     private void changeDisplayedData(OperatorInfo operatorInfo) {

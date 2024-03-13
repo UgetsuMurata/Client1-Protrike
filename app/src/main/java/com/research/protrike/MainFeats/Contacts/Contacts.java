@@ -106,8 +106,11 @@ public class Contacts extends AppCompatActivity {
                                     @Override
                                     public void LatLngReturn(LatLng latLng) {
                                         if (latLng != null) {
-                                            String newMessage = String.format("www.google.com/maps/search/?api=1&query=%s,%s", latLng.latitude, latLng.longitude);
+                                            String newMessage = String.format("%s (%s,%s)", LatLngProcessing.getLocationAddress(getApplicationContext(), latLng),  latLng.latitude, latLng.longitude);
                                             message[0] = message[0].replace("@app:location", newMessage);
+                                        } else {
+                                            Toast.makeText(getApplicationContext(), "No location found. Please try agian later.", Toast.LENGTH_SHORT).show();
+                                            return;
                                         }
                                         if (message[0].contains("@app:tricycle_number")) {
                                             Intent intent = new Intent(getApplicationContext(), TOIScanner.class);

@@ -27,7 +27,7 @@ android {
         variant ->
             variant.outputs.each{
                 output->
-                    def name = "Protrike v0.0.20240218a.apk"
+                    def name = "Protrike v0.1.20240312a.apk"
                     output.outputFileName = name
             }
     }

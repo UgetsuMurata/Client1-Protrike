@@ -1,24 +1,42 @@
 package com.research.protrike.HelperFunctions;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Semaphore;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -27,6 +45,18 @@ import java.util.concurrent.CountDownLatch;
 public class LatLngProcessing {
 
     public static Integer LATLNG_REQCODE = 1001100;
+
+    public static String getLocationAddress(Context context, LatLng latLng) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            Address obj = addresses.get(0);
+            return obj.getAddressLine(0);
+        } catch (IOException e) {
+            Toast.makeText(context, "Can't retrieve location name now.", Toast.LENGTH_SHORT).show();
+            return "Search this location: ";
+        }
+    }
 
     public static float getDistance(LatLng point1, LatLng point2) {
         Location location1 = new Location("point1");
@@ -59,13 +89,23 @@ public class LatLngProcessing {
         void onLocationChanged(@NonNull LatLng latLng);
     }
 
-    public static void getCurrentLocation(Context context, LocationCallback locationCallback) {
+    public static boolean getCurrentLocation(Context context, LocationCallback locationCallback) {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(context,
                         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+            return false;
+        }
+        boolean isOn = askForGPS(context, new PermissionReturn() {
+            @Override
+            public void permissionResponse(boolean response) {
+
+            }
+        });
+        if (!isOn) {
+            Toast.makeText(context, "GPS Location is required to do this action.", Toast.LENGTH_SHORT).show();
+            return false;
         }
         Criteria criteria = new Criteria();
         criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
@@ -94,9 +134,40 @@ public class LatLngProcessing {
                     public void onProviderDisabled(String provider) {
                     }
                 });
+        return true;
     }
 
-    public interface LocationReturn{
+    public interface PermissionReturn{
+        void permissionResponse(boolean response);
+    }
+
+    public static boolean askForGPS(Context context, PermissionReturn permissionReturn) {
+        final LocationManager manager = (LocationManager) context.getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            permissionReturn.permissionResponse(true);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            dialog.cancel();
+                            permissionReturn.permissionResponse(false);
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+            return false;
+        }
+        return true;
+    }
+
+    public interface LocationReturn {
         void LatLngReturn(LatLng latLng);
     }
 
@@ -108,21 +179,31 @@ public class LatLngProcessing {
                         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(context, "Please turn your GPS on.", Toast.LENGTH_SHORT).show();
             locationReturn.LatLngReturn(null);
+            return;
         }
+        boolean isOn = askForGPS(context, new PermissionReturn() {
+            @Override
+            public void permissionResponse(boolean response) {
+                if (!response) {
+                    Toast.makeText(context, "GPS Location is required to do this action.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        if (!isOn) {
+            Toast.makeText(context, "GPS is off, try again later.", Toast.LENGTH_SHORT).show();
+            return;
+        };
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        // Get the last known location
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener((Activity) context, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            double latitude = location.getLatitude();
-                            double longitude = location.getLongitude();
-                            LatLng latLng = new LatLng(latitude, longitude);
-                            locationReturn.LatLngReturn(latLng);
-                        }
-                    }
-                });
+        fusedLocationClient.requestLocationUpdates(locationRequest, new com.google.android.gms.location.LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                locationReturn.LatLngReturn(latLng);
+                fusedLocationClient.removeLocationUpdates(this);
+            }
+        }, Looper.getMainLooper());
     }
 }
