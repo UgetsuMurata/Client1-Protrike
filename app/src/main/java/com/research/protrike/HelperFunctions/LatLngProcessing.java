@@ -3,6 +3,7 @@ package com.research.protrike.HelperFunctions;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -30,13 +31,17 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -137,31 +142,53 @@ public class LatLngProcessing {
         return true;
     }
 
-    public interface PermissionReturn{
+    public interface PermissionReturn {
         void permissionResponse(boolean response);
     }
 
     public static boolean askForGPS(Context context, PermissionReturn permissionReturn) {
-        final LocationManager manager = (LocationManager) context.getSystemService( Context.LOCATION_SERVICE );
+        final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                    .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                            permissionReturn.permissionResponse(true);
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            dialog.cancel();
-                            permissionReturn.permissionResponse(false);
-                        }
-                    });
-            final AlertDialog alert = builder.create();
-            alert.show();
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            SettingsClient settingsClient = LocationServices.getSettingsClient(context);
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(10 * 1000);
+            locationRequest.setFastestInterval(2 * 1000);
+
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+            LocationSettingsRequest locationSettingsRequest = builder.build();
+            builder.setAlwaysShow(true);
+
+
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                settingsClient.checkLocationSettings(locationSettingsRequest)
+                        .addOnSuccessListener((Activity) context, new OnSuccessListener<LocationSettingsResponse>() {
+                            @Override
+                            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                                permissionReturn.permissionResponse(true);
+                            }
+                        })
+                        .addOnFailureListener((Activity) context, e -> {
+                            int statusCode = ((ApiException) e).getStatusCode();
+                            switch (statusCode) {
+                                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                    try {
+                                        ResolvableApiException rae = (ResolvableApiException) e;
+                                        rae.startResolutionForResult((Activity) context, 1111);
+                                        permissionReturn.permissionResponse(true);
+                                    } catch (IntentSender.SendIntentException ignored) {
+                                        permissionReturn.permissionResponse(false);
+                                    }
+                                    break;
+                                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                    context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                    permissionReturn.permissionResponse(true);
+                                    break;
+                            }
+                        });
+            }
             return false;
         }
         return true;
@@ -192,7 +219,8 @@ public class LatLngProcessing {
         if (!isOn) {
             Toast.makeText(context, "GPS is off, try again later.", Toast.LENGTH_SHORT).show();
             return;
-        };
+        }
+        ;
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);

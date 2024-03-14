@@ -2,6 +2,7 @@ package com.research.protrike.SplashScreen;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         display.setMax(maxProcesses);
         new Thread(() -> {
+            Long startingTime = System.currentTimeMillis();
             AtomicInteger process_number = new AtomicInteger(0);
             for (int i = 0; i < maxProcesses; i++) {
                 process_number.getAndIncrement();
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
             }
+            while (System.currentTimeMillis() - startingTime < 1000); //Minimum splashscreen exposure.
             startActivity(new Intent(MainActivity.this, Dashboard.class));
             finish();
         }).start();
@@ -72,7 +75,10 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(MainActivity.this, "Entering offline mode...", Toast.LENGTH_LONG).show();
+                    String lastFareUpdate = SharedPref.readString(getApplicationContext(), SharedPref.TRICYCLE_FARE_LAST_UPDATE, "");
+                    if (!"".equals(lastFareUpdate)) {
+                        Toast.makeText(MainActivity.this, "Entering offline mode...", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         }
